@@ -19,9 +19,14 @@ export class UserStore {
 
   login(authDto: AuthUser) {
     const user = this.users.find((user) => user.email === authDto.email);
-    if (compare(authDto.password, user.password)) {
-      return sign(user, 'secret');
+    if (!user) {
+      throw new Error('user is not fount');
+    } else {
+      return user;
     }
+    // if (compare(authDto.password, user.password)) {
+    //   return sign(user, 'secret');
+    // }
   }
 
   findById(id: string) {

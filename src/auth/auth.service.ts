@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from './dto/auth.dto';
 import { UserStore } from 'src/store/user-store/user-store';
-import { hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userStore: UserStore) {}
+  constructor(
+    private readonly userStore: UserStore,
+    private readonly jwtService: JwtService,
+  ) {}
 
   login(authDto: AuthUser) {
-    return this.userStore.login(authDto);
+    const user = this.userStore.login(authDto);
+    if (!user) {
+      throw new Error('user not found');
+    }
+    return this.jwtService.sign(user);
   }
 
   save(authDto: AuthUser) {
